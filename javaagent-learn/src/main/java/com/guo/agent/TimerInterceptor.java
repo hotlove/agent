@@ -20,7 +20,7 @@ public class TimerInterceptor {
 
     static Map<String, Trace> traceMap = new ConcurrentHashMap<>();
     static Map<String, Trace> tracePointer = new ConcurrentHashMap<>();
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
     @RuntimeType
     public static Object intercept(@Origin Method method, @SuperCall Callable<?> callable) throws Exception {
         Object result = null;
