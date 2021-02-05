@@ -9,6 +9,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * @Date: 2021/2/4 14:08
@@ -18,43 +20,44 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TimerInterceptor {
 
-    static Map<String, Trace> traceMap = new ConcurrentHashMap<>();
+    static List<Trace> traceList = new CopyOnWriteArrayList<>();
+
     static Map<String, Trace> tracePointer = new ConcurrentHashMap<>();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
     @RuntimeType
     public static Object intercept(@Origin Method method, @SuperCall Callable<?> callable) throws Exception {
         Object result = null;
         long threadId = Thread.currentThread().getId();
         String key = threadId+"_key";
-        System.out.println("==========> thread_key:"+key+"------methodName:"+method.getName());
-        try {
-            Trace firstTrace = traceMap.get(key);
-            if (firstTrace == null) {
-                // 说明是第一个节点
-                Trace trace = newTrace(method.getName(), "0", true);
-                traceMap.put(key, trace);
-                tracePointer.put(key, trace);
-            } else {
-                Trace currentPointerTrace = tracePointer.get(key);
-                Trace trace = newTrace(method.getName(), currentPointerTrace.getSpanId(), false);
-                currentPointerTrace.next = trace;
-                trace.prev = currentPointerTrace;
-                tracePointer.put(key, trace);
-            }
 
+        Trace firstTrace = tracePointer.get(key);
+        String spanId = null;
+        if (firstTrace == null) {
+            // 说明是第一个节点
+            Trace trace = newTrace(method.getName(), "0", true);
+            spanId = trace.getSpanId();
+            tracePointer.put(key, trace);
+            traceList.add(trace);
+        } else {
+            Trace currentPointerTrace = tracePointer.get(key);
+            Trace trace = newTrace(method.getName(), currentPointerTrace.getSpanId(), false);
+            tracePointer.put(key, trace);
+            traceList.add(trace);
+            spanId = trace.getSpanId();
+        }
+
+        try {
             result = callable.call(); // 执行原函数
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+
             Trace trace = tracePointer.get(key);
+            trace.setEndTime(System.currentTimeMillis());
             if (!trace.isFirst()) {
-                trace.setEndTime(System.currentTimeMillis());
-                tracePointer.put(key, trace.prev);
-            } else {
-                trace.setEndTime(System.currentTimeMillis());
-                printTrace(trace);
+                List<Object> collect = traceList.stream().filter(e -> e.getSpanId().equals(spanId)).collect(Collectors.toList());
+//                tracePointer.put()
             }
-//            System.out.println("==================>methodName:"+method.getName()+"---time:"+(System.currentTimeMillis() - startTime)+"ms");
         }
         return result;
     }
