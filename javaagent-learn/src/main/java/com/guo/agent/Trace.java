@@ -1,8 +1,5 @@
 package com.guo.agent;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @Date: 2021/2/5 16:56
  * @Author 郭乐建
@@ -10,12 +7,11 @@ import java.util.List;
  * @Description:
  */
 public class Trace {
+    private String threadId;
 
     private String traceId;
 
     private String spanId;
-
-    private String threadId;
 
     private String parentId;
 
@@ -27,15 +23,9 @@ public class Trace {
 
     private String methodName;
 
-    private List<Trace> childdren = new ArrayList<>();
+    public Trace prev;
 
-    public List<Trace> getChilddren() {
-        return childdren;
-    }
-
-    public void setChilddren(List<Trace> childdren) {
-        this.childdren = childdren;
-    }
+    public Trace next;
 
     public long getStartTime() {
         return startTime;
