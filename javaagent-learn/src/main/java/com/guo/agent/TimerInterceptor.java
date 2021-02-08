@@ -25,10 +25,10 @@ public class TimerInterceptor {
 
     @RuntimeType
     public static Object intercept(@This Object obj, @Origin Method method, @SuperCall Callable<?> callable) throws Exception {
-        System.out.println("=============>this:"+obj.getClass().getName());
         Object result = null;
         long threadId = Thread.currentThread().getId();
         String key = null;
+        System.out.println("=============>method:"+method.getName());
 
         Trace firstTrace = traceLocal.get();
         if (firstTrace == null) {
@@ -58,7 +58,6 @@ public class TimerInterceptor {
             e.printStackTrace();
         } finally {
             Trace trace = tracePointer.get(key);
-            System.out.println("============>currentKey"+trace.toString());
             if (trace.isFirst()) {
                 trace.setEndTime(System.currentTimeMillis());
                 printTrace(trace);
