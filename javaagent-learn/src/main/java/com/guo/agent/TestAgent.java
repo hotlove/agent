@@ -48,24 +48,7 @@ public class TestAgent {
         // "(com.badu.bdsaas.baseinfo.service.*|com.badu.btsaas.controller.*)"
         new AgentBuilder
                 .Default()
-//                .type(ElementMatchers.<TypeDescription>nameMatches("(com.guo.springboot.controller.*|com.guo.springboot.service.*)"))
-                .type(new ElementMatcher.Junction() {
-
-                    @Override
-                    public boolean matches(Object target) {
-                        return false;
-                    }
-
-                    @Override
-                    public Junction or(ElementMatcher other) {
-                        return null;
-                    }
-
-                    @Override
-                    public Junction and(ElementMatcher other) {
-                        return null;
-                    }
-                })
+                .type(ElementMatchers.<TypeDescription>nameMatches("(com.guo.springboot.controller.*|com.guo.springboot.service.*)"))
                 .transform(transformer)
                 .installOn(inst);
     }
