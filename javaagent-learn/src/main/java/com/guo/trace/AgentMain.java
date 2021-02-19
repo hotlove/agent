@@ -38,15 +38,23 @@ public class AgentMain {
 //                        .intercept(MethodDelegation.to(methodInterceptor));
 //            }
 //        };
+        // (com.badu.bdsaas.baseinfo.service.*|com.badu.btsaas.controller.*)
         new AgentBuilder
                 .Default()
-//                .type(buildMatch())
-                .type(
-                        ElementMatchers.<TypeDescription>nameMatches("(com.guo.springboot.controller.*|com.guo.springboot.service.*)")
-                                .and(not(nameContainsIgnoreCase("equals")))
-                                .and(not(nameContainsIgnoreCase("toString")))
-                                .and(not(isInterface())).and(not(nameContainsIgnoreCase("CGLIB")))
-                )
+                .type(buildMatch())
+//                .type(
+//                        ElementMatchers
+//                                .<TypeDescription>nameContains("com.badu")
+//                                .and(not(nameContainsIgnoreCase("equals")))
+//                                .and(not(nameContainsIgnoreCase("toString")))
+//                                .and(not(isInterface()))
+//                                .and(not(nameContainsIgnoreCase("io.spring")))
+//                                .and(not(nameContainsIgnoreCase("util")))
+//                                .and(not(nameContainsIgnoreCase("interceptor")))
+//                                .and(not(nameContainsIgnoreCase("CGLIB")))
+////                                .and(not(isSetter()))
+////                                .and(not(isGetter()))
+//                )
 //                .transform(transformer)
                 .transform((builder, typeDescription, classLoader, javaModule) ->
                                 builder
@@ -65,7 +73,7 @@ public class AgentMain {
 
         judge.and(not(isInterface()))
                 .and(not(isSetter()))
-                .and(nameContainsIgnoreCase("io.spring"))
+//                .and(nameContainsIgnoreCase("io.spring"))
                 .and(not(nameContainsIgnoreCase("util")))
                 .and(not(nameContainsIgnoreCase("interceptor")))
                 .and(not(nameContainsIgnoreCase("CGLIB")))

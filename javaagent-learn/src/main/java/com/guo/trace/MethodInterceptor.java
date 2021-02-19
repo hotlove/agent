@@ -73,15 +73,18 @@ public class MethodInterceptor {
                 } else {
                     Map<String, Long> methodObj = (Map<String, Long>) stack.get(index);
                     Long startt = methodObj.get(method.getName());
-                    methodObj.put(method.getName(), System.currentTimeMillis() - startt);
+                    if (startt != null) {
+                        methodObj.put(method.getName(), System.currentTimeMillis() - startt);
 
-                    methodStack.set(stack);
+                        methodStack.set(stack);
 
-                    Integer i = index - 1;
-                    countPointer.set(i);
+                        Integer i = index - 1;
+                        countPointer.set(i);
+                    }
+
                 }
             }
-//            System.out.println("=============>"+method.getName()+" time:"+(System.currentTimeMillis() - startTime)+"ms");
+            System.out.println("=============>"+method.getName()+" time:"+(System.currentTimeMillis() - startTime)+"ms");
         }
         return result;
     }
